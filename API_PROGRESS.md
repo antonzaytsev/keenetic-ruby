@@ -103,10 +103,10 @@ Implementation status according to [KEENETIC_API.md](./KEENETIC_API.md) specific
 
 - [x] List Physical Ports (`client.ports.all`)
 - [x] Find Port (`client.ports.find`)
-- [ ] List NAT Rules
-- [ ] Add Port Forward
-- [ ] Delete Port Forward
-- [ ] UPnP Mappings
+- [x] List NAT Rules (`client.nat.rules`, `client.nat.find_rule`)
+- [x] Add Port Forward (`client.nat.add_forward`)
+- [x] Delete Port Forward (`client.nat.delete_forward`)
+- [x] UPnP Mappings (`client.nat.upnp_mappings`)
 
 ## 11. Firewall
 
