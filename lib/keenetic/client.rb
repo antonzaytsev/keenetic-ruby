@@ -122,6 +122,11 @@ module Keenetic
       @nat ||= Resources::Nat.new(self)
     end
 
+    # @return [Resources::Vpn] VPN server resource
+    def vpn
+      @vpn ||= Resources::Vpn.new(self)
+    end
+
     # Execute arbitrary RCI command(s).
     #
     # Provides raw access to the Keenetic RCI (Remote Command Interface).
