@@ -20,6 +20,7 @@ require_relative 'keenetic/resources/nat'
 require_relative 'keenetic/resources/vpn'
 require_relative 'keenetic/resources/diagnostics'
 require_relative 'keenetic/resources/firewall'
+require_relative 'keenetic/resources/mesh'
 
 # Keenetic Router API Client
 #

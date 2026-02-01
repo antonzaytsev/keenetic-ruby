@@ -137,6 +137,11 @@ module Keenetic
       @firewall ||= Resources::Firewall.new(self)
     end
 
+    # @return [Resources::Mesh] Mesh Wi-Fi system resource
+    def mesh
+      @mesh ||= Resources::Mesh.new(self)
+    end
+
     # Execute arbitrary RCI command(s).
     #
     # Provides raw access to the Keenetic RCI (Remote Command Interface).
