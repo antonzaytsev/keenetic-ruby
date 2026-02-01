@@ -48,6 +48,34 @@ client.internet.speed
 
 # Ports
 client.ports.all
+
+# Static Routes
+client.routes.all
+client.routes.add(host: '1.2.3.4', interface: 'Wireguard0', comment: 'VPN host')
+client.routes.add(network: '10.0.0.0/24', interface: 'Wireguard0', comment: 'VPN network')
+client.routes.add_batch([
+  { host: '1.2.3.4', interface: 'Wireguard0', comment: 'Host 1' },
+  { network: '10.0.0.0/24', interface: 'Wireguard0', comment: 'Network 1' }
+])
+client.routes.delete(host: '1.2.3.4')
+client.routes.delete(network: '10.0.0.0/24')
+
+# Hotspot / Policies
+client.hotspot.policies                                         # all IP policies
+client.hotspot.hosts                                            # all registered hosts
+client.hotspot.set_host_policy(mac: 'AA:BB:CC:DD:EE:FF', policy: 'Policy0')
+client.hotspot.set_host_policy(mac: 'AA:BB:CC:DD:EE:FF', policy: nil)  # remove policy
+
+# Configuration
+client.system_config.save       # save to flash
+client.system_config.download   # download startup-config.txt
+
+# Raw RCI Access (for custom commands)
+client.rci({ 'show' => { 'system' => {} } })
+client.rci([
+  { 'show' => { 'system' => {} } },
+  { 'show' => { 'version' => {} } }
+])
 ```
 
 ## Error Handling

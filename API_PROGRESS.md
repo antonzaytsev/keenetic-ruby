@@ -68,15 +68,36 @@ Implementation status according to [KEENETIC_API.md](./KEENETIC_API.md) specific
 
 ## 9. Routing
 
-- [ ] Routing Table
-- [ ] Add Static Route
-- [ ] ARP Table
+- [x] Routing Table (`client.routing.routes`)
+- [x] ARP Table (`client.routing.arp_table`)
+- [x] Find Route (`client.routing.find_route`)
+- [x] Find ARP Entry (`client.routing.find_arp_entry`)
+- [x] Add Route (`client.routing.create_route`)
+- [x] Delete Route (`client.routing.delete_route`)
+
+## 9.0 Static Routes (Configuration)
+
+- [x] List Static Routes (`client.routes.all`)
+- [x] Add Static Route (`client.routes.add`)
+- [x] Add Batch Routes (`client.routes.add_batch`)
+- [x] Delete Static Route (`client.routes.delete`)
+- [x] Delete Batch Routes (`client.routes.delete_batch`)
+- [x] CIDR to Mask Conversion (`Keenetic::Resources::Routes.cidr_to_mask`)
 
 ## 9.1 Routing Policies
 
 - [x] List All Policies (`client.policies.all`)
 - [x] Device Policy Assignments (`client.policies.device_assignments`)
 - [x] Find Policy by ID (`client.policies.find`)
+
+## 9.2 Hotspot / IP Policies
+
+- [x] List All IP Policies (`client.hotspot.policies`)
+- [x] List All Hosts with Policies (`client.hotspot.hosts`)
+- [x] Find Policy by ID (`client.hotspot.find_policy`)
+- [x] Find Host by MAC (`client.hotspot.find_host`)
+- [x] Set Host Policy (`client.hotspot.set_host_policy`)
+- [x] Remove Host Policy (`client.hotspot.set_host_policy(policy: nil)`)
 
 ## 10. NAT & Port Forwarding
 
@@ -146,12 +167,17 @@ Implementation status according to [KEENETIC_API.md](./KEENETIC_API.md) specific
 ## 20. System Operations
 
 - [ ] Reboot
-- [ ] Save Configuration
+- [x] Save Configuration (`client.system_config.save`)
+- [x] Download Configuration (`client.system_config.download`)
 - [ ] Factory Reset
 - [ ] Check for Updates
 - [ ] Apply Firmware Update
 - [ ] LED Control
 - [ ] Button Configuration
+
+## 20.1 Raw RCI Access
+
+- [x] Execute RCI Command (`client.rci`)
 
 ## 21. Components
 
