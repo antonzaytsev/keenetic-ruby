@@ -147,6 +147,11 @@ module Keenetic
       @usb ||= Resources::Usb.new(self)
     end
 
+    # @return [Resources::Dns] DNS settings and cache resource
+    def dns
+      @dns ||= Resources::Dns.new(self)
+    end
+
     # Execute arbitrary RCI command(s).
     #
     # Provides raw access to the Keenetic RCI (Remote Command Interface).

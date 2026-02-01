@@ -22,6 +22,7 @@ require_relative 'keenetic/resources/diagnostics'
 require_relative 'keenetic/resources/firewall'
 require_relative 'keenetic/resources/mesh'
 require_relative 'keenetic/resources/usb'
+require_relative 'keenetic/resources/dns'
 
 # Keenetic Router API Client
 #
