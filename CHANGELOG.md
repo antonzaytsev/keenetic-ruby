@@ -33,6 +33,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Configuration Management
 - `client.system_config.upload(content)` - Upload and restore configuration backup
 
+#### Diagnostics
+- `client.diagnostics.ping(host)` - Run ping test
+- `client.diagnostics.traceroute(host)` - Run traceroute
+- `client.diagnostics.nslookup(host)` / `dns_lookup` - DNS lookup
+
+#### Firewall
+- `client.firewall.policies` - List firewall policies
+- `client.firewall.access_lists` - List access control lists
+- `client.firewall.add_rule(...)` - Add firewall rule
+- `client.firewall.delete_rule(index:)` - Delete firewall rule
+
+#### Mesh Wi-Fi System
+- `client.mesh.status` - Get mesh network status
+- `client.mesh.members` - List mesh nodes/extenders
+
+#### USB & Storage
+- `client.usb.devices` - List connected USB devices
+- `client.usb.media` / `storage` - List mounted storage partitions
+- `client.usb.eject(port:)` - Safely eject USB device
+
+#### DNS
+- `client.dns.servers` / `name_servers` - List DNS servers
+- `client.dns.cache` - View DNS cache entries
+- `client.dns.proxy` / `proxy_settings` - DNS proxy configuration
+- `client.dns.clear_cache` - Flush DNS cache
+
+#### Dynamic DNS
+- `client.dyndns.keendns_status` - KeenDNS status
+- `client.dyndns.configure_keendns(...)` - Configure KeenDNS
+- `client.dyndns.third_party` / `providers` - Third-party DDNS providers
+
+#### Schedules
+- `client.schedule.all` - List all schedules
+- `client.schedule.find(name)` - Find schedule by name
+- `client.schedule.create(...)` - Create access schedule
+- `client.schedule.delete(name:)` - Delete schedule
+
+#### Users
+- `client.users.all` - List all users
+- `client.users.find(name)` - Find user by name
+- `client.users.create(...)` - Create user with permissions
+- `client.users.delete(name:)` - Delete user
+
+#### Components
+- `client.components.installed` - List installed components
+- `client.components.available` - List available components
+- `client.components.install(name:)` - Install component
+- `client.components.remove(name:)` - Remove component
+
+#### QoS & Traffic Control
+- `client.qos.traffic_shaper` / `shaper` - Traffic shaper status
+- `client.qos.intelliqos` / `settings` - IntelliQoS settings
+- `client.qos.traffic_stats` / `host_stats` - Traffic statistics by host
+
+#### IPv6
+- `client.ipv6.interfaces` - IPv6 interfaces
+- `client.ipv6.routes` - IPv6 routing table
+- `client.ipv6.neighbors` - IPv6 neighbor table (NDP cache)
+
 ## [0.2.0] - 2025-01-XX
 
 ### Added
