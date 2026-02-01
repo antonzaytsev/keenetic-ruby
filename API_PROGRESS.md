@@ -116,10 +116,10 @@ Implementation status according to [KEENETIC_API.md](./KEENETIC_API.md) specific
 
 ## 12. VPN
 
-- [ ] VPN Server Status
-- [ ] VPN Server Clients
-- [ ] IPsec Status
-- [ ] Configure VPN Server
+- [x] VPN Server Status (`client.vpn.status`)
+- [x] VPN Server Clients (`client.vpn.clients`)
+- [x] IPsec Status (`client.vpn.ipsec_status`)
+- [x] Configure VPN Server (`client.vpn.configure`)
 
 ## 13. USB & Storage
 
