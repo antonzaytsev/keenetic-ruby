@@ -132,6 +132,11 @@ module Keenetic
       @diagnostics ||= Resources::Diagnostics.new(self)
     end
 
+    # @return [Resources::Firewall] Firewall resource
+    def firewall
+      @firewall ||= Resources::Firewall.new(self)
+    end
+
     # Execute arbitrary RCI command(s).
     #
     # Provides raw access to the Keenetic RCI (Remote Command Interface).
