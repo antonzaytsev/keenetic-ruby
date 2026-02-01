@@ -110,9 +110,10 @@ Implementation status according to [KEENETIC_API.md](./KEENETIC_API.md) specific
 
 ## 11. Firewall
 
-- [ ] Firewall Policies
-- [ ] Access Lists
-- [ ] Add Firewall Rule
+- [x] Firewall Policies (`client.firewall.policies`)
+- [x] Access Lists (`client.firewall.access_lists`)
+- [x] Add Firewall Rule (`client.firewall.add_rule`)
+- [x] Delete Firewall Rule (`client.firewall.delete_rule`)
 
 ## 12. VPN
 
