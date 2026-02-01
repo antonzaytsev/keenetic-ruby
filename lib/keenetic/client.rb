@@ -117,6 +117,11 @@ module Keenetic
       @system_config ||= Resources::Config.new(self)
     end
 
+    # @return [Resources::Nat] NAT and port forwarding resource
+    def nat
+      @nat ||= Resources::Nat.new(self)
+    end
+
     # Execute arbitrary RCI command(s).
     #
     # Provides raw access to the Keenetic RCI (Remote Command Interface).

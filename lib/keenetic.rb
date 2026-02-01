@@ -16,6 +16,7 @@ require_relative 'keenetic/resources/logs'
 require_relative 'keenetic/resources/routes'
 require_relative 'keenetic/resources/hotspot'
 require_relative 'keenetic/resources/config'
+require_relative 'keenetic/resources/nat'
 
 # Keenetic Router API Client
 #
