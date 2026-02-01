@@ -211,6 +211,19 @@ module Keenetic
       request(:post, '/rci/', body: commands)
     end
 
+    # Make a POST request with raw body content (non-JSON).
+    #
+    # Used for file uploads like configuration restore.
+    #
+    # @param path [String] API path
+    # @param content [String] Raw content to send
+    # @param content_type [String] Content-Type header (default: text/plain)
+    # @return [String, nil] Response body
+    #
+    def post_raw(path, content, content_type: 'text/plain')
+      request(:post, path, raw_body: content, content_type: content_type)
+    end
+
     # Check if client is authenticated.
     # @return [Boolean]
     def authenticated?
@@ -254,7 +267,10 @@ module Keenetic
         url += "?#{URI.encode_www_form(options[:params])}"
       end
 
-      if options[:body]
+      if options[:raw_body]
+        request_options[:body] = options[:raw_body]
+        request_options[:headers]['Content-Type'] = options[:content_type] || 'text/plain'
+      elsif options[:body]
         request_options[:body] = options[:body].to_json
         request_options[:headers]['Content-Type'] = 'application/json'
       end

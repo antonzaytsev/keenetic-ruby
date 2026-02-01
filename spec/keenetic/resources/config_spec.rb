@@ -47,4 +47,49 @@ RSpec.describe Keenetic::Resources::Config do
       expect(result).to be_a(String)
     end
   end
+
+  describe '#upload' do
+    let(:config_content) do
+      <<~CONFIG
+        ! Router configuration
+        system name-server 8.8.8.8
+        interface Bridge0
+          ip address 192.168.1.1/24
+      CONFIG
+    end
+
+    it 'uploads configuration to the router' do
+      upload_stub = stub_request(:post, 'http://192.168.1.1/ci/startup-config.txt')
+        .with(
+          body: config_content,
+          headers: { 'Content-Type' => 'text/plain' }
+        )
+        .to_return(status: 200, body: '')
+
+      config_resource.upload(config_content)
+
+      expect(upload_stub).to have_been_requested
+    end
+
+    it 'returns response from router' do
+      stub_request(:post, 'http://192.168.1.1/ci/startup-config.txt')
+        .to_return(status: 200, body: 'Configuration uploaded')
+
+      result = config_resource.upload(config_content)
+
+      expect(result).to eq('Configuration uploaded')
+    end
+
+    it 'raises error for empty content' do
+      expect { config_resource.upload('') }.to raise_error(ArgumentError, 'Configuration content cannot be empty')
+    end
+
+    it 'raises error for nil content' do
+      expect { config_resource.upload(nil) }.to raise_error(ArgumentError, 'Configuration content cannot be empty')
+    end
+
+    it 'raises error for whitespace-only content' do
+      expect { config_resource.upload("   \n\t  ") }.to raise_error(ArgumentError, 'Configuration content cannot be empty')
+    end
+  end
 end

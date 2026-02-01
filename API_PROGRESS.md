@@ -169,6 +169,7 @@ Implementation status according to [KEENETIC_API.md](./KEENETIC_API.md) specific
 - [ ] Reboot
 - [x] Save Configuration (`client.system_config.save`)
 - [x] Download Configuration (`client.system_config.download`)
+- [x] Upload Configuration (`client.system_config.upload`)
 - [ ] Factory Reset
 - [ ] Check for Updates
 - [ ] Apply Firmware Update

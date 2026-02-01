@@ -17,6 +17,10 @@ module Keenetic
         client.post(path, body)
       end
 
+      def post_raw(path, content, content_type: 'text/plain')
+        client.post_raw(path, content, content_type: content_type)
+      end
+
       # Convert kebab-case keys to snake_case symbols
       # @param hash [Hash] Hash with string keys
       # @return [Hash] Hash with symbolized snake_case keys
