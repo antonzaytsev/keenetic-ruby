@@ -130,10 +130,10 @@ Implementation status according to [KEENETIC_API.md](./KEENETIC_API.md) specific
 
 ## 14. DNS
 
-- [ ] DNS Servers
-- [ ] DNS Cache
-- [ ] DNS Proxy Settings
-- [ ] Clear DNS Cache
+- [x] DNS Servers (`client.dns.servers`, `client.dns.name_servers`)
+- [x] DNS Cache (`client.dns.cache`)
+- [x] DNS Proxy Settings (`client.dns.proxy`, `client.dns.proxy_settings`)
+- [x] Clear DNS Cache (`client.dns.clear_cache`)
 
 ## 15. Dynamic DNS
 
