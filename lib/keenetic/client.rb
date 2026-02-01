@@ -152,6 +152,36 @@ module Keenetic
       @dns ||= Resources::Dns.new(self)
     end
 
+    # @return [Resources::Dyndns] Dynamic DNS resource
+    def dyndns
+      @dyndns ||= Resources::Dyndns.new(self)
+    end
+
+    # @return [Resources::Schedule] Access schedules resource
+    def schedule
+      @schedule ||= Resources::Schedule.new(self)
+    end
+
+    # @return [Resources::Users] User accounts resource
+    def users
+      @users ||= Resources::Users.new(self)
+    end
+
+    # @return [Resources::Components] System components resource
+    def components
+      @components ||= Resources::Components.new(self)
+    end
+
+    # @return [Resources::Qos] QoS and traffic control resource
+    def qos
+      @qos ||= Resources::Qos.new(self)
+    end
+
+    # @return [Resources::Ipv6] IPv6 network resource
+    def ipv6
+      @ipv6 ||= Resources::Ipv6.new(self)
+    end
+
     # Execute arbitrary RCI command(s).
     #
     # Provides raw access to the Keenetic RCI (Remote Command Interface).
