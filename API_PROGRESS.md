@@ -190,8 +190,8 @@ Implementation status according to [KEENETIC_API.md](./KEENETIC_API.md) specific
 
 ## 22. Mesh Wi-Fi System
 
-- [ ] Mesh Status
-- [ ] Mesh Members
+- [x] Mesh Status (`client.mesh.status`)
+- [x] Mesh Members (`client.mesh.members`)
 
 ## 23. QoS & Traffic Control
 
