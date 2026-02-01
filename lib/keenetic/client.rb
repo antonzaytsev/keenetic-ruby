@@ -127,6 +127,11 @@ module Keenetic
       @vpn ||= Resources::Vpn.new(self)
     end
 
+    # @return [Resources::Diagnostics] Network diagnostics resource
+    def diagnostics
+      @diagnostics ||= Resources::Diagnostics.new(self)
+    end
+
     # Execute arbitrary RCI command(s).
     #
     # Provides raw access to the Keenetic RCI (Remote Command Interface).

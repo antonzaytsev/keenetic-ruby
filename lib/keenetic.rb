@@ -18,6 +18,7 @@ require_relative 'keenetic/resources/hotspot'
 require_relative 'keenetic/resources/config'
 require_relative 'keenetic/resources/nat'
 require_relative 'keenetic/resources/vpn'
+require_relative 'keenetic/resources/diagnostics'
 
 # Keenetic Router API Client
 #
