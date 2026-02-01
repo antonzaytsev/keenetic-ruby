@@ -290,5 +290,207 @@ RSpec.describe Keenetic::Resources::System do
       end
     end
   end
+
+  describe '#reboot' do
+    it 'sends reboot command' do
+      reboot_stub = stub_request(:post, 'http://192.168.1.1/rci/system/reboot')
+        .with(body: '{}')
+        .to_return(status: 200, body: '{}')
+
+      system_resource.reboot
+
+      expect(reboot_stub).to have_been_requested
+    end
+  end
+
+  describe '#factory_reset' do
+    it 'sends factory reset command' do
+      reset_stub = stub_request(:post, 'http://192.168.1.1/rci/system/default')
+        .with(body: '{}')
+        .to_return(status: 200, body: '{}')
+
+      system_resource.factory_reset
+
+      expect(reset_stub).to have_been_requested
+    end
+  end
+
+  describe '#check_updates' do
+    let(:update_response) do
+      {
+        'available' => true,
+        'version' => '4.2.0.0.C.0',
+        'current' => '4.1.0.0.C.0',
+        'channel' => 'stable',
+        'release-date' => '2024-01-15',
+        'downloading' => false,
+        'progress' => 0
+      }
+    end
+
+    before do
+      stub_request(:get, 'http://192.168.1.1/rci/show/system/update')
+        .to_return(status: 200, body: update_response.to_json)
+    end
+
+    it 'returns update availability info' do
+      result = system_resource.check_updates
+
+      expect(result[:available]).to eq(true)
+      expect(result[:version]).to eq('4.2.0.0.C.0')
+      expect(result[:current]).to eq('4.1.0.0.C.0')
+      expect(result[:channel]).to eq('stable')
+    end
+
+    it 'normalizes kebab-case keys' do
+      result = system_resource.check_updates
+
+      expect(result).to have_key(:release_date)
+      expect(result[:release_date]).to eq('2024-01-15')
+    end
+
+    it 'normalizes boolean values' do
+      result = system_resource.check_updates
+
+      expect(result[:available]).to eq(true)
+      expect(result[:downloading]).to eq(false)
+    end
+
+    context 'when no update is available' do
+      before do
+        stub_request(:get, 'http://192.168.1.1/rci/show/system/update')
+          .to_return(status: 200, body: {
+            'available' => false,
+            'current' => '4.2.0.0.C.0'
+          }.to_json)
+      end
+
+      it 'returns not available' do
+        result = system_resource.check_updates
+
+        expect(result[:available]).to eq(false)
+      end
+    end
+
+    context 'when response is empty' do
+      before do
+        stub_request(:get, 'http://192.168.1.1/rci/show/system/update')
+          .to_return(status: 200, body: '{}')
+      end
+
+      it 'returns empty hash' do
+        expect(system_resource.check_updates).to eq({})
+      end
+    end
+  end
+
+  describe '#apply_update' do
+    it 'sends update command' do
+      update_stub = stub_request(:post, 'http://192.168.1.1/rci/system/update')
+        .with(body: '{}')
+        .to_return(status: 200, body: '{}')
+
+      system_resource.apply_update
+
+      expect(update_stub).to have_been_requested
+    end
+  end
+
+  describe '#set_led_mode' do
+    it 'sends LED off command' do
+      led_stub = stub_request(:post, 'http://192.168.1.1/rci/system/led')
+        .with(body: { 'mode' => 'off' }.to_json)
+        .to_return(status: 200, body: '{}')
+
+      system_resource.set_led_mode('off')
+
+      expect(led_stub).to have_been_requested
+    end
+
+    it 'sends LED on command' do
+      led_stub = stub_request(:post, 'http://192.168.1.1/rci/system/led')
+        .with(body: { 'mode' => 'on' }.to_json)
+        .to_return(status: 200, body: '{}')
+
+      system_resource.set_led_mode('on')
+
+      expect(led_stub).to have_been_requested
+    end
+
+    it 'sends LED auto command' do
+      led_stub = stub_request(:post, 'http://192.168.1.1/rci/system/led')
+        .with(body: { 'mode' => 'auto' }.to_json)
+        .to_return(status: 200, body: '{}')
+
+      system_resource.set_led_mode('auto')
+
+      expect(led_stub).to have_been_requested
+    end
+
+    it 'raises error for invalid mode' do
+      expect { system_resource.set_led_mode('invalid') }
+        .to raise_error(ArgumentError, /Invalid LED mode/)
+    end
+  end
+
+  describe '#button_config' do
+    let(:button_response) do
+      {
+        'wifi' => {
+          'action' => 'toggle',
+          'enabled' => true
+        },
+        'fn' => {
+          'action' => 'wps',
+          'long-press' => 'reset'
+        },
+        'reset' => {
+          'enabled' => true
+        }
+      }
+    end
+
+    before do
+      stub_request(:get, 'http://192.168.1.1/rci/show/button')
+        .to_return(status: 200, body: button_response.to_json)
+    end
+
+    it 'returns button configuration' do
+      result = system_resource.button_config
+
+      expect(result[:wifi][:action]).to eq('toggle')
+      expect(result[:wifi][:enabled]).to eq(true)
+      expect(result[:fn][:action]).to eq('wps')
+    end
+
+    it 'normalizes nested kebab-case keys' do
+      result = system_resource.button_config
+
+      expect(result[:fn]).to have_key(:long_press)
+      expect(result[:fn][:long_press]).to eq('reset')
+    end
+
+    context 'when response is empty' do
+      before do
+        stub_request(:get, 'http://192.168.1.1/rci/show/button')
+          .to_return(status: 200, body: '{}')
+      end
+
+      it 'returns empty hash' do
+        expect(system_resource.button_config).to eq({})
+      end
+    end
+
+    context 'when response is not a hash' do
+      before do
+        stub_request(:get, 'http://192.168.1.1/rci/show/button')
+          .to_return(status: 200, body: '[]')
+      end
+
+      it 'returns empty hash' do
+        expect(system_resource.button_config).to eq({})
+      end
+    end
+  end
 end
 

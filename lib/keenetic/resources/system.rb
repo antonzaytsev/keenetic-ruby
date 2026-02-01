@@ -138,7 +138,141 @@ module Keenetic
         normalize_license(response)
       end
 
+      # Reboot the router.
+      #
+      # == Keenetic API Request
+      #   POST /rci/system/reboot
+      #   Body: {}
+      #
+      # == Warning
+      # This will immediately restart the router. All active connections
+      # will be dropped and the router will be unavailable for 1-2 minutes.
+      #
+      # @return [Hash, nil] API response
+      # @example
+      #   client.system.reboot
+      #
+      def reboot
+        post('/rci/system/reboot', {})
+      end
+
+      # Factory reset the router.
+      #
+      # == Keenetic API Request
+      #   POST /rci/system/default
+      #   Body: {}
+      #
+      # == Warning
+      # This will erase ALL configuration and restore factory defaults.
+      # The router will reboot and you will lose access until you
+      # reconfigure it. Use with extreme caution!
+      #
+      # @return [Hash, nil] API response
+      # @example
+      #   client.system.factory_reset
+      #
+      def factory_reset
+        post('/rci/system/default', {})
+      end
+
+      # Check for available firmware updates.
+      #
+      # == Keenetic API Request
+      #   GET /rci/show/system/update
+      #
+      # == Response Fields
+      #   - available: Whether an update is available
+      #   - version: Available firmware version
+      #   - current: Current firmware version
+      #   - channel: Update channel (stable, preview)
+      #
+      # @return [Hash] Update availability information
+      # @example
+      #   update_info = client.system.check_updates
+      #   # => { available: true, version: "4.2.0", current: "4.1.0", ... }
+      #
+      def check_updates
+        response = get('/rci/show/system/update')
+        normalize_update_info(response)
+      end
+
+      # Apply available firmware update.
+      #
+      # == Keenetic API Request
+      #   POST /rci/system/update
+      #   Body: {}
+      #
+      # == Warning
+      # This will download and install the latest firmware update.
+      # The router will reboot automatically after the update is applied.
+      # Do not power off the router during the update process!
+      #
+      # @return [Hash, nil] API response
+      # @example
+      #   client.system.apply_update
+      #
+      def apply_update
+        post('/rci/system/update', {})
+      end
+
+      # Control LED mode on the router.
+      #
+      # == Keenetic API Request
+      #   POST /rci/system/led
+      #   Body: { "mode": "on" | "off" | "auto" }
+      #
+      # @param mode [String] LED mode: "on", "off", or "auto"
+      # @return [Hash, nil] API response
+      # @raise [ArgumentError] if mode is invalid
+      #
+      # @example Turn off LEDs
+      #   client.system.set_led_mode('off')
+      #
+      # @example Set to automatic
+      #   client.system.set_led_mode('auto')
+      #
+      def set_led_mode(mode)
+        valid_modes = %w[on off auto]
+        unless valid_modes.include?(mode)
+          raise ArgumentError, "Invalid LED mode: #{mode}. Valid modes: #{valid_modes.join(', ')}"
+        end
+
+        post('/rci/system/led', { 'mode' => mode })
+      end
+
+      # Get button configuration.
+      #
+      # == Keenetic API Request
+      #   GET /rci/show/button
+      #
+      # Returns information about physical buttons on the router
+      # and their configured actions.
+      #
+      # @return [Hash] Button configuration
+      # @example
+      #   buttons = client.system.button_config
+      #   # => { wifi: { action: "toggle" }, fn: { action: "wps" } }
+      #
+      def button_config
+        response = get('/rci/show/button')
+        normalize_button_config(response)
+      end
+
       private
+
+      def normalize_update_info(response)
+        return {} unless response.is_a?(Hash)
+
+        result = deep_normalize_keys(response)
+        normalize_booleans(result, %i[available downloading])
+        result
+      end
+
+      def normalize_button_config(response)
+        return {} unless response.is_a?(Hash)
+
+        deep_normalize_keys(response)
+      end
 
       def normalize_resources(response)
         return {} unless response.is_a?(Hash)
