@@ -338,8 +338,70 @@ RSpec.describe Keenetic::Client do
       expect(client.wifi).to be_a(Keenetic::Resources::WiFi)
     end
 
+    it 'provides routes resource' do
+      expect(client.routes).to be_a(Keenetic::Resources::Routes)
+    end
+
+    it 'provides hotspot resource' do
+      expect(client.hotspot).to be_a(Keenetic::Resources::Hotspot)
+    end
+
+    it 'provides system_config resource' do
+      expect(client.system_config).to be_a(Keenetic::Resources::Config)
+    end
+
     it 'memoizes resource instances' do
       expect(client.devices).to be(client.devices)
+      expect(client.routes).to be(client.routes)
+      expect(client.hotspot).to be(client.hotspot)
+      expect(client.system_config).to be(client.system_config)
+    end
+  end
+
+  describe '#rci' do
+    before { stub_keenetic_auth }
+
+    it 'executes single command as array' do
+      rci_stub = stub_request(:post, 'http://192.168.1.1/rci/')
+        .with(body: [{ 'show' => { 'system' => {} } }].to_json)
+        .to_return(status: 200, body: [{ 'cpuload' => 10 }].to_json)
+
+      result = client.rci({ 'show' => { 'system' => {} } })
+
+      expect(rci_stub).to have_been_requested
+      expect(result).to eq([{ 'cpuload' => 10 }])
+    end
+
+    it 'executes array of commands directly' do
+      rci_stub = stub_request(:post, 'http://192.168.1.1/rci/')
+        .with(body: [
+          { 'show' => { 'system' => {} } },
+          { 'show' => { 'version' => {} } }
+        ].to_json)
+        .to_return(status: 200, body: [
+          { 'cpuload' => 10 },
+          { 'model' => 'Keenetic' }
+        ].to_json)
+
+      result = client.rci([
+        { 'show' => { 'system' => {} } },
+        { 'show' => { 'version' => {} } }
+      ])
+
+      expect(rci_stub).to have_been_requested
+      expect(result.size).to eq(2)
+      expect(result[0]['cpuload']).to eq(10)
+      expect(result[1]['model']).to eq('Keenetic')
+    end
+
+    it 'executes write commands' do
+      rci_stub = stub_request(:post, 'http://192.168.1.1/rci/')
+        .with(body: [{ 'ip' => { 'hotspot' => { 'host' => { 'mac' => 'aa:bb:cc:dd:ee:ff', 'permit' => true } } } }].to_json)
+        .to_return(status: 200, body: '[{}]')
+
+      client.rci({ 'ip' => { 'hotspot' => { 'host' => { 'mac' => 'aa:bb:cc:dd:ee:ff', 'permit' => true } } } })
+
+      expect(rci_stub).to have_been_requested
     end
   end
 

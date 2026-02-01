@@ -102,6 +102,55 @@ module Keenetic
       @logs ||= Resources::Logs.new(self)
     end
 
+    # @return [Resources::Routes] Static routes resource
+    def routes
+      @routes ||= Resources::Routes.new(self)
+    end
+
+    # @return [Resources::Hotspot] Hotspot hosts and policies resource
+    def hotspot
+      @hotspot ||= Resources::Hotspot.new(self)
+    end
+
+    # @return [Resources::Config] Configuration management resource
+    def system_config
+      @system_config ||= Resources::Config.new(self)
+    end
+
+    # Execute arbitrary RCI command(s).
+    #
+    # Provides raw access to the Keenetic RCI (Remote Command Interface).
+    # Use this for custom commands not covered by the gem's resources.
+    #
+    # == Keenetic API
+    #   POST http://<host>/rci/
+    #   Content-Type: application/json
+    #   Body: Array or Hash of RCI commands
+    #
+    # @param body [Hash, Array<Hash>] RCI command(s) to execute
+    # @return [Hash, Array, nil] Parsed JSON response
+    #
+    # @example Execute single command
+    #   client.rci({ 'show' => { 'system' => {} } })
+    #   # => { "show" => { "system" => { ... } } }
+    #
+    # @example Execute batch commands
+    #   client.rci([
+    #     { 'show' => { 'system' => {} } },
+    #     { 'show' => { 'version' => {} } }
+    #   ])
+    #   # => [{ "show" => { "system" => { ... } } }, { "show" => { "version" => { ... } } }]
+    #
+    # @example Execute write command
+    #   client.rci([
+    #     { 'ip' => { 'hotspot' => { 'host' => { 'mac' => 'aa:bb:cc:dd:ee:ff', 'permit' => true } } } }
+    #   ])
+    #
+    def rci(body)
+      commands = body.is_a?(Array) ? body : [body]
+      batch(commands)
+    end
+
     # Make a GET request to the router API.
     #
     # == Keenetic API

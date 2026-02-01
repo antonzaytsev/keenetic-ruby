@@ -13,6 +13,9 @@ require_relative 'keenetic/resources/policies'
 require_relative 'keenetic/resources/dhcp'
 require_relative 'keenetic/resources/routing'
 require_relative 'keenetic/resources/logs'
+require_relative 'keenetic/resources/routes'
+require_relative 'keenetic/resources/hotspot'
+require_relative 'keenetic/resources/config'
 
 # Keenetic Router API Client
 #
@@ -56,6 +59,23 @@ require_relative 'keenetic/resources/logs'
 #
 #   # Ports
 #   client.ports.all           # Physical port statuses
+#
+#   # Static Routes
+#   client.routes.all          # All static routes
+#   client.routes.add(...)     # Add static route
+#   client.routes.delete(...)  # Delete static route
+#
+#   # Hotspot / Policies
+#   client.hotspot.policies    # All IP policies
+#   client.hotspot.hosts       # All hosts with policies
+#   client.hotspot.set_host_policy(mac: '...', policy: '...')
+#
+#   # Configuration
+#   client.system_config.save         # Save configuration
+#   client.system_config.download     # Download startup config
+#
+#   # Raw RCI Access
+#   client.rci({ ... })        # Execute arbitrary RCI commands
 #
 # == Error Handling
 #
