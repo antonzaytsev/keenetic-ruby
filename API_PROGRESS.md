@@ -137,21 +137,21 @@ Implementation status according to [KEENETIC_API.md](./KEENETIC_API.md) specific
 
 ## 15. Dynamic DNS
 
-- [ ] KeenDNS Status
-- [ ] Configure KeenDNS
-- [ ] Third-Party DDNS
+- [x] KeenDNS Status (`client.dyndns.keendns_status`)
+- [x] Configure KeenDNS (`client.dyndns.configure_keendns`)
+- [x] Third-Party DDNS (`client.dyndns.third_party`, `client.dyndns.providers`)
 
 ## 16. Schedules
 
-- [ ] List Schedules
-- [ ] Create Schedule
-- [ ] Delete Schedule
+- [x] List Schedules (`client.schedule.all`, `client.schedule.find`)
+- [x] Create Schedule (`client.schedule.create`)
+- [x] Delete Schedule (`client.schedule.delete`)
 
 ## 17. Users
 
-- [ ] List Users
-- [ ] Create User
-- [ ] Delete User
+- [x] List Users (`client.users.all`, `client.users.find`)
+- [x] Create User (`client.users.create`)
+- [x] Delete User (`client.users.delete`)
 
 ## 18. Logs
 
@@ -183,10 +183,10 @@ Implementation status according to [KEENETIC_API.md](./KEENETIC_API.md) specific
 
 ## 21. Components
 
-- [ ] Installed Components
-- [ ] Available Components
-- [ ] Install Component
-- [ ] Remove Component
+- [x] Installed Components (`client.components.installed`)
+- [x] Available Components (`client.components.available`)
+- [x] Install Component (`client.components.install`)
+- [x] Remove Component (`client.components.remove`)
 
 ## 22. Mesh Wi-Fi System
 
@@ -195,12 +195,12 @@ Implementation status according to [KEENETIC_API.md](./KEENETIC_API.md) specific
 
 ## 23. QoS & Traffic Control
 
-- [ ] Traffic Shaper Status
-- [ ] IntelliQoS Settings
-- [ ] Traffic Statistics by Host
+- [x] Traffic Shaper Status (`client.qos.traffic_shaper`, `client.qos.shaper`)
+- [x] IntelliQoS Settings (`client.qos.intelliqos`, `client.qos.settings`)
+- [x] Traffic Statistics by Host (`client.qos.traffic_stats`, `client.qos.host_stats`)
 
 ## 24. IPv6
 
-- [ ] IPv6 Interfaces
-- [ ] IPv6 Routes
-- [ ] IPv6 Neighbors
+- [x] IPv6 Interfaces (`client.ipv6.interfaces`)
+- [x] IPv6 Routes (`client.ipv6.routes`)
+- [x] IPv6 Neighbors (`client.ipv6.neighbors`)
