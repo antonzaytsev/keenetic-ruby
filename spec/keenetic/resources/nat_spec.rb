@@ -150,4 +150,166 @@ RSpec.describe Keenetic::Resources::Nat do
       expect(nat.find_rule(999)).to be_nil
     end
   end
+
+  describe '#add_forward' do
+    it 'sends port forward rule with all parameters' do
+      add_stub = stub_request(:post, 'http://192.168.1.1/rci/ip/nat')
+        .with { |request|
+          body = JSON.parse(request.body)
+          body['index'] == 1 &&
+            body['description'] == 'Web Server' &&
+            body['protocol'] == 'tcp' &&
+            body['interface'] == 'ISP' &&
+            body['port'] == 8080 &&
+            body['to-host'] == '192.168.1.100' &&
+            body['to-port'] == 80 &&
+            body['enabled'] == true
+        }
+        .to_return(status: 200, body: '{}')
+
+      nat.add_forward(
+        index: 1,
+        description: 'Web Server',
+        protocol: 'tcp',
+        port: 8080,
+        to_host: '192.168.1.100',
+        to_port: 80
+      )
+
+      expect(add_stub).to have_been_requested
+    end
+
+    it 'sends port forward without optional description' do
+      add_stub = stub_request(:post, 'http://192.168.1.1/rci/ip/nat')
+        .with { |request|
+          body = JSON.parse(request.body)
+          body['index'] == 1 &&
+            body['protocol'] == 'tcp' &&
+            body['interface'] == 'ISP' &&
+            body['port'] == 22 &&
+            body['to-host'] == '192.168.1.50' &&
+            body['to-port'] == 22 &&
+            body['enabled'] == true &&
+            !body.key?('description')
+        }
+        .to_return(status: 200, body: '{}')
+
+      nat.add_forward(
+        index: 1,
+        protocol: 'tcp',
+        port: 22,
+        to_host: '192.168.1.50',
+        to_port: 22
+      )
+
+      expect(add_stub).to have_been_requested
+    end
+
+    it 'sends port range forward with end_port' do
+      add_stub = stub_request(:post, 'http://192.168.1.1/rci/ip/nat')
+        .with { |request|
+          body = JSON.parse(request.body)
+          body['index'] == 2 &&
+            body['description'] == 'Game Ports' &&
+            body['protocol'] == 'udp' &&
+            body['interface'] == 'ISP' &&
+            body['port'] == 27015 &&
+            body['end-port'] == 27030 &&
+            body['to-host'] == '192.168.1.50' &&
+            body['to-port'] == 27015 &&
+            body['enabled'] == true
+        }
+        .to_return(status: 200, body: '{}')
+
+      nat.add_forward(
+        index: 2,
+        description: 'Game Ports',
+        protocol: 'udp',
+        port: 27015,
+        end_port: 27030,
+        to_host: '192.168.1.50',
+        to_port: 27015
+      )
+
+      expect(add_stub).to have_been_requested
+    end
+
+    it 'allows specifying custom interface' do
+      add_stub = stub_request(:post, 'http://192.168.1.1/rci/ip/nat')
+        .with(body: {
+          'index' => 1,
+          'protocol' => 'tcp',
+          'interface' => 'PPPoE0',
+          'port' => 80,
+          'to-host' => '192.168.1.100',
+          'to-port' => 80,
+          'enabled' => true
+        }.to_json)
+        .to_return(status: 200, body: '{}')
+
+      nat.add_forward(
+        index: 1,
+        protocol: 'tcp',
+        interface: 'PPPoE0',
+        port: 80,
+        to_host: '192.168.1.100',
+        to_port: 80
+      )
+
+      expect(add_stub).to have_been_requested
+    end
+
+    it 'allows disabling the rule on creation' do
+      add_stub = stub_request(:post, 'http://192.168.1.1/rci/ip/nat')
+        .with(body: {
+          'index' => 1,
+          'protocol' => 'tcp',
+          'interface' => 'ISP',
+          'port' => 80,
+          'to-host' => '192.168.1.100',
+          'to-port' => 80,
+          'enabled' => false
+        }.to_json)
+        .to_return(status: 200, body: '{}')
+
+      nat.add_forward(
+        index: 1,
+        protocol: 'tcp',
+        port: 80,
+        to_host: '192.168.1.100',
+        to_port: 80,
+        enabled: false
+      )
+
+      expect(add_stub).to have_been_requested
+    end
+  end
+
+  describe '#delete_forward' do
+    it 'sends delete command with rule index' do
+      delete_stub = stub_request(:post, 'http://192.168.1.1/rci/ip/nat')
+        .with(body: {
+          'index' => 1,
+          'no' => true
+        }.to_json)
+        .to_return(status: 200, body: '{}')
+
+      nat.delete_forward(index: 1)
+
+      expect(delete_stub).to have_been_requested
+    end
+
+    it 'works with different index values' do
+      delete_stub = stub_request(:post, 'http://192.168.1.1/rci/ip/nat')
+        .with(body: {
+          'index' => 99,
+          'no' => true
+        }.to_json)
+        .to_return(status: 200, body: '{}')
+
+      nat.delete_forward(index: 99)
+
+      expect(delete_stub).to have_been_requested
+    end
+  end
 end

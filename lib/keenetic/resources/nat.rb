@@ -59,6 +59,76 @@ module Keenetic
         rules.find { |r| r[:index] == index }
       end
 
+      # Add a port forwarding rule.
+      #
+      # == Keenetic API Request
+      #   POST /rci/ip/nat
+      #   Body: { index, description, protocol, interface, port, to-host, to-port, enabled }
+      #
+      # @param index [Integer] Rule index/priority
+      # @param protocol [String] Protocol: "tcp", "udp", or "any"
+      # @param port [Integer] External port
+      # @param to_host [String] Internal host IP address
+      # @param to_port [Integer] Internal port
+      # @param interface [String] WAN interface name (default: "ISP")
+      # @param description [String, nil] Optional rule description
+      # @param end_port [Integer, nil] End of port range (optional)
+      # @param enabled [Boolean] Whether rule is active (default: true)
+      # @return [Hash, Array, nil] API response
+      #
+      # @example Add simple port forward
+      #   client.nat.add_forward(
+      #     index: 1,
+      #     protocol: 'tcp',
+      #     port: 8080,
+      #     to_host: '192.168.1.100',
+      #     to_port: 80
+      #   )
+      #
+      # @example Add port range forward
+      #   client.nat.add_forward(
+      #     index: 2,
+      #     protocol: 'udp',
+      #     port: 27015,
+      #     end_port: 27030,
+      #     to_host: '192.168.1.50',
+      #     to_port: 27015,
+      #     description: 'Game Server'
+      #   )
+      #
+      def add_forward(index:, protocol:, port:, to_host:, to_port:, interface: 'ISP',
+                      description: nil, end_port: nil, enabled: true)
+        params = {
+          'index' => index,
+          'protocol' => protocol,
+          'interface' => interface,
+          'port' => port,
+          'to-host' => to_host,
+          'to-port' => to_port,
+          'enabled' => enabled
+        }
+        params['description'] = description if description
+        params['end-port'] = end_port if end_port
+
+        post('/rci/ip/nat', params)
+      end
+
+      # Delete a port forwarding rule.
+      #
+      # == Keenetic API Request
+      #   POST /rci/ip/nat
+      #   Body: { index, no: true }
+      #
+      # @param index [Integer] Rule index to delete
+      # @return [Hash, Array, nil] API response
+      #
+      # @example
+      #   client.nat.delete_forward(index: 1)
+      #
+      def delete_forward(index:)
+        post('/rci/ip/nat', { 'index' => index, 'no' => true })
+      end
+
       private
 
       def normalize_rules(response)
