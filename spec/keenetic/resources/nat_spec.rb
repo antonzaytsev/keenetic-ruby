@@ -312,4 +312,84 @@ RSpec.describe Keenetic::Resources::Nat do
       expect(delete_stub).to have_been_requested
     end
   end
+
+  describe '#upnp_mappings' do
+    let(:upnp_response) do
+      [
+        {
+          'protocol' => 'tcp',
+          'interface' => 'ISP',
+          'port' => 51413,
+          'to-host' => '192.168.1.50',
+          'to-port' => 51413,
+          'description' => 'Transmission BitTorrent'
+        },
+        {
+          'protocol' => 'udp',
+          'interface' => 'ISP',
+          'port' => 3478,
+          'to-host' => '192.168.1.100',
+          'to-port' => 3478,
+          'description' => 'PlayStation Network'
+        }
+      ]
+    end
+
+    before do
+      stub_request(:get, 'http://192.168.1.1/rci/show/upnp/redirect')
+        .to_return(status: 200, body: upnp_response.to_json)
+    end
+
+    it 'returns normalized list of UPnP mappings' do
+      result = nat.upnp_mappings
+
+      expect(result.size).to eq(2)
+      expect(result.first[:protocol]).to eq('tcp')
+      expect(result.first[:interface]).to eq('ISP')
+      expect(result.first[:port]).to eq(51413)
+      expect(result.first[:to_host]).to eq('192.168.1.50')
+      expect(result.first[:to_port]).to eq(51413)
+      expect(result.first[:description]).to eq('Transmission BitTorrent')
+    end
+
+    it 'normalizes kebab-case keys to snake_case' do
+      result = nat.upnp_mappings
+
+      expect(result.first).to have_key(:to_host)
+      expect(result.first).to have_key(:to_port)
+    end
+
+    context 'when response is empty' do
+      before do
+        stub_request(:get, 'http://192.168.1.1/rci/show/upnp/redirect')
+          .to_return(status: 200, body: '[]')
+      end
+
+      it 'returns empty array' do
+        expect(nat.upnp_mappings).to eq([])
+      end
+    end
+
+    context 'when response is not an array' do
+      before do
+        stub_request(:get, 'http://192.168.1.1/rci/show/upnp/redirect')
+          .to_return(status: 200, body: '{}')
+      end
+
+      it 'returns empty array' do
+        expect(nat.upnp_mappings).to eq([])
+      end
+    end
+
+    context 'when UPnP is disabled or no mappings exist' do
+      before do
+        stub_request(:get, 'http://192.168.1.1/rci/show/upnp/redirect')
+          .to_return(status: 200, body: 'null')
+      end
+
+      it 'returns empty array' do
+        expect(nat.upnp_mappings).to eq([])
+      end
+    end
+  end
 end

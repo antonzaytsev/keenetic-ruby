@@ -129,7 +129,52 @@ module Keenetic
         post('/rci/ip/nat', { 'index' => index, 'no' => true })
       end
 
+      # Get all UPnP port mappings.
+      #
+      # UPnP mappings are automatically created by devices on the network.
+      # These are read-only and managed by the devices themselves.
+      #
+      # == Keenetic API Request
+      #   GET /rci/show/upnp/redirect
+      #
+      # == Response Fields
+      #   - protocol: "tcp" or "udp"
+      #   - interface: WAN interface
+      #   - port: External port
+      #   - to_host: Internal host IP
+      #   - to_port: Internal port
+      #   - description: Mapping description (from device)
+      #
+      # @return [Array<Hash>] List of normalized UPnP mappings
+      # @example
+      #   mappings = client.nat.upnp_mappings
+      #   # => [{ protocol: "tcp", port: 51234, to_host: "192.168.1.50", ... }]
+      #
+      def upnp_mappings
+        response = get('/rci/show/upnp/redirect')
+        normalize_upnp_mappings(response)
+      end
+
       private
+
+      def normalize_upnp_mappings(response)
+        return [] unless response.is_a?(Array)
+
+        response.map { |mapping| normalize_upnp_mapping(mapping) }.compact
+      end
+
+      def normalize_upnp_mapping(data)
+        return nil unless data.is_a?(Hash)
+
+        {
+          protocol: data['protocol'],
+          interface: data['interface'],
+          port: data['port'],
+          to_host: data['to-host'],
+          to_port: data['to-port'],
+          description: data['description']
+        }
+      end
 
       def normalize_rules(response)
         return [] unless response.is_a?(Array)
