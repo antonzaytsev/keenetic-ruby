@@ -166,15 +166,15 @@ Implementation status according to [KEENETIC_API.md](./KEENETIC_API.md) specific
 
 ## 20. System Operations
 
-- [ ] Reboot
+- [x] Reboot (`client.system.reboot`)
 - [x] Save Configuration (`client.system_config.save`)
 - [x] Download Configuration (`client.system_config.download`)
 - [x] Upload Configuration (`client.system_config.upload`)
-- [ ] Factory Reset
-- [ ] Check for Updates
-- [ ] Apply Firmware Update
-- [ ] LED Control
-- [ ] Button Configuration
+- [x] Factory Reset (`client.system.factory_reset`)
+- [x] Check for Updates (`client.system.check_updates`)
+- [x] Apply Firmware Update (`client.system.apply_update`)
+- [x] LED Control (`client.system.set_led_mode`)
+- [x] Button Configuration (`client.system.button_config`)
 
 ## 20.1 Raw RCI Access
 
