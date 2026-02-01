@@ -124,9 +124,9 @@ Implementation status according to [KEENETIC_API.md](./KEENETIC_API.md) specific
 
 ## 13. USB & Storage
 
-- [ ] USB Devices
-- [ ] Storage/Media
-- [ ] Safely Eject USB
+- [x] USB Devices (`client.usb.devices`)
+- [x] Storage/Media (`client.usb.media`, `client.usb.storage`)
+- [x] Safely Eject USB (`client.usb.eject`)
 
 ## 14. DNS
 
