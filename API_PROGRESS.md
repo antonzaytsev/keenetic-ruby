@@ -160,9 +160,9 @@ Implementation status according to [KEENETIC_API.md](./KEENETIC_API.md) specific
 
 ## 19. Diagnostics
 
-- [ ] Ping
-- [ ] Traceroute
-- [ ] DNS Lookup
+- [x] Ping (`client.diagnostics.ping`)
+- [x] Traceroute (`client.diagnostics.traceroute`)
+- [x] DNS Lookup (`client.diagnostics.nslookup`, `client.diagnostics.dns_lookup`)
 
 ## 20. System Operations
 
