@@ -142,6 +142,11 @@ module Keenetic
       @mesh ||= Resources::Mesh.new(self)
     end
 
+    # @return [Resources::Usb] USB devices and storage resource
+    def usb
+      @usb ||= Resources::Usb.new(self)
+    end
+
     # Execute arbitrary RCI command(s).
     #
     # Provides raw access to the Keenetic RCI (Remote Command Interface).
