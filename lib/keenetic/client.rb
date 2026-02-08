@@ -318,6 +318,25 @@ module Keenetic
     def request(method, path, options = {})
       authenticate! unless @authenticated || path == '/auth'
 
+      response = execute_request(method, path, options)
+
+      # Handle 401 by re-authenticating and retrying once
+      if response.code == 401 && path != '/auth'
+        config.logger.debug { "Keenetic: Got 401, re-authenticating..." }
+        @authenticated = false
+        @mutex.synchronize { perform_authentication }
+        
+        response = execute_request(method, path, options)
+        
+        if response.code == 401
+          raise AuthenticationError, "Request unauthorized after re-authentication (HTTP 401)"
+        end
+      end
+
+      handle_response(response)
+    end
+
+    def execute_request(method, path, options)
       url = "#{config.base_url}#{path}"
       
       request_options = {
@@ -342,9 +361,7 @@ module Keenetic
 
       config.logger.debug { "Keenetic: #{method.upcase} #{url}" }
 
-      response = Typhoeus::Request.new(url, request_options).run
-
-      handle_response(response)
+      Typhoeus::Request.new(url, request_options).run
     end
 
     def build_headers
@@ -378,7 +395,7 @@ module Keenetic
       end
     end
 
-    def handle_response(response)
+    def handle_response(response, allow_401: false)
       parse_cookies(response)
 
       if response.timed_out?
@@ -389,7 +406,7 @@ module Keenetic
         raise ConnectionError, "Connection failed: #{response.return_message}"
       end
 
-      unless response.success? || response.code == 401
+      unless response.success? || (allow_401 && response.code == 401)
         if response.code == 404
           raise NotFoundError, "Resource not found"
         end

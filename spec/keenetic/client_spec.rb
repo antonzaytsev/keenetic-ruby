@@ -431,5 +431,70 @@ RSpec.describe Keenetic::Client do
       expect { client.get('/rci/slow') }.to raise_error(Keenetic::TimeoutError)
     end
   end
+
+  describe '401 retry handling' do
+    before { stub_keenetic_auth }
+
+    it 're-authenticates and retries on 401 response' do
+      request_count = 0
+
+      stub_request(:get, 'http://192.168.1.1/rci/show/system')
+        .to_return do
+          request_count += 1
+          if request_count == 1
+            { status: 401, body: '{"error": "unauthorized"}' }
+          else
+            { status: 200, body: '{"cpuload": 10}' }
+          end
+        end
+
+      result = client.get('/rci/show/system')
+
+      expect(request_count).to eq(2)
+      expect(result).to eq({ 'cpuload' => 10 })
+    end
+
+    it 'raises AuthenticationError after retry fails with 401' do
+      stub_request(:get, 'http://192.168.1.1/rci/show/system')
+        .to_return(status: 401, body: '{"error": "unauthorized"}')
+
+      expect { client.get('/rci/show/system') }.to raise_error(
+        Keenetic::AuthenticationError,
+        /Request unauthorized after re-authentication/
+      )
+    end
+
+    it 'retries only once on 401' do
+      request_count = 0
+
+      stub_request(:get, 'http://192.168.1.1/rci/show/system')
+        .to_return do
+          request_count += 1
+          { status: 401, body: '{"error": "unauthorized"}' }
+        end
+
+      expect { client.get('/rci/show/system') }.to raise_error(Keenetic::AuthenticationError)
+      expect(request_count).to eq(2)
+    end
+
+    it 're-authenticates on 401 for POST requests' do
+      request_count = 0
+
+      stub_request(:post, 'http://192.168.1.1/rci/')
+        .to_return do
+          request_count += 1
+          if request_count == 1
+            { status: 401, body: '{"error": "unauthorized"}' }
+          else
+            { status: 200, body: '[{"success": true}]' }
+          end
+        end
+
+      result = client.batch([{ show: { system: {} } }])
+
+      expect(request_count).to eq(2)
+      expect(result).to eq([{ 'success' => true }])
+    end
+  end
 end
 
