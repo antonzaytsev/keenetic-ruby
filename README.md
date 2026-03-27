@@ -38,9 +38,21 @@ client.network.interfaces       # all interfaces
 client.wifi.access_points       # Wi-Fi networks
 client.internet.status          # internet connectivity
 
+# Static routes
+client.routes.all               # configured static routes
+client.routes.add(network: '10.0.0.0/24', interface: 'Wireguard0', comment: 'VPN')
+
+# DNS-based routes
+client.dns_routes.domain_groups # FQDN domain groups
+client.dns_routes.routes        # DNS-based route mappings
+client.dns_routes.create_domain_group(name: 'domain-list0', description: 'YouTube',
+                                      domains: ['youtube.com', 'googlevideo.com'])
+client.dns_routes.add_route(group: 'domain-list0', interface: 'Wireguard0')
+client.dns_routes.delete_route(index: 'abc123...')
+
 # Port forwarding
 client.nat.rules                # NAT rules
-client.nat.add_forward(index: 1, protocol: 'tcp', port: 8080, 
+client.nat.add_forward(index: 1, protocol: 'tcp', port: 8080,
                        to_host: '192.168.1.100', to_port: 80)
 
 # VPN

@@ -16,6 +16,8 @@
 7. [Wi-Fi](#7-wi-fi)
 8. [DHCP](#8-dhcp)
 9. [Routing](#9-routing)
+   - [9.6 FQDN Domain Groups](#96-fqdn-domain-groups)
+   - [9.7 DNS-Based Routes](#97-dns-based-routes)
 10. [NAT & Port Forwarding](#10-nat--port-forwarding)
 11. [Firewall](#11-firewall)
 12. [VPN](#12-vpn)
@@ -1041,6 +1043,192 @@ Wi-Fi interfaces are included in the standard interface list with additional fie
   }
 }]
 ```
+
+---
+
+### 9.6 FQDN Domain Groups
+
+**Purpose**: Manage named lists of domain names used by DNS-based routes. Each group maps to one or more domains and can be assigned to a routing interface via a DNS-based route.
+
+| | |
+|---|---|
+| **Endpoint** | `POST /rci/` (batch) |
+| **Method** | POST |
+
+#### Read All FQDN Groups
+
+**Request Body**:
+
+```json
+[{"show":{"sc":{"object-group":{"fqdn":{}}}}}]
+```
+
+**Response Fields**:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `<name>` | object | Domain group keyed by group name (e.g., `domain-list0`) |
+| `<name>.description` | string | Human-readable label for the group |
+| `<name>.include` | array | List of domain entries |
+| `<name>.include[].address` | string | Domain name (e.g., `youtube.com`) |
+
+**Response Example**:
+
+```json
+[{
+  "show": {
+    "sc": {
+      "object-group": {
+        "fqdn": {
+          "domain-list0": {
+            "description": "youtube.com",
+            "include": [
+              { "address": "googlevideo.com" },
+              { "address": "youtube.com" },
+              { "address": "ytimg.com" }
+            ]
+          },
+          "domain-list1": {
+            "description": "telegram",
+            "include": [
+              { "address": "telegram.org" },
+              { "address": "api.telegram.org" }
+            ]
+          }
+        }
+      }
+    }
+  }
+}]
+```
+
+#### Create FQDN Group
+
+**Request Body**:
+
+```json
+[
+  {"webhelp":{"event":{"push":{"data":"{\"type\":\"configuration_change\",\"value\":{\"url\":\"/staticRoutes/dns\"}}}"}}}},
+  {"object-group":{"fqdn":{"domain-list0":{"description":"My Domains","include":[{"address":"example.com"}]}}}},
+  {"system":{"configuration":{"save":{}}}}
+]
+```
+
+**Request Fields**:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `<name>` | string | Group identifier key (e.g., `domain-list0`) |
+| `description` | string | Human-readable label |
+| `include` | array | Domains to include |
+| `include[].address` | string | Domain name |
+
+#### Delete FQDN Group
+
+**Request Body**:
+
+```json
+[
+  {"webhelp":{"event":{"push":{"data":"{\"type\":\"configuration_change\",\"value\":{\"url\":\"/staticRoutes/dns\"}}}"}}}},
+  {"object-group":{"fqdn":{"domain-list0":{"no":true}}}},
+  {"system":{"configuration":{"save":{}}}}
+]
+```
+
+---
+
+### 9.7 DNS-Based Routes
+
+**Purpose**: Map an FQDN domain group to a network interface. The router automatically resolves the domains in the group and adds the resolved IP addresses as floating static routes to the specified interface.
+
+| | |
+|---|---|
+| **Endpoint** | `POST /rci/` (batch) |
+| **Method** | POST |
+
+#### Read All DNS-Based Routes
+
+**Request Body**:
+
+```json
+[{"show":{"sc":{"dns-proxy":{"route":{}}}}}]
+```
+
+**Response Fields**:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `group` | string | FQDN group name (e.g., `domain-list0`) |
+| `interface` | string | Target interface (e.g., `Wireguard0`) |
+| `auto` | boolean | Auto-generated route flag |
+| `index` | string | Unique route identifier (MD5 hash) |
+| `comment` | string | Optional description |
+
+**Response Example**:
+
+```json
+[{
+  "show": {
+    "sc": {
+      "dns-proxy": {
+        "route": [
+          {
+            "group": "domain-list0",
+            "interface": "Wireguard2",
+            "auto": true,
+            "index": "c52bba355a2830fdf55ccb3748a879df",
+            "comment": ""
+          },
+          {
+            "group": "domain-list1",
+            "interface": "Wireguard0",
+            "auto": true,
+            "index": "f5061eb124f54cc42be95410b1b36917",
+            "comment": ""
+          }
+        ]
+      }
+    }
+  }
+}]
+```
+
+#### Create DNS-Based Route
+
+**Request Body**:
+
+```json
+[
+  {"webhelp":{"event":{"push":{"data":"{\"type\":\"configuration_change\",\"value\":{\"url\":\"/staticRoutes/dns\"}}}"}}}},
+  {"dns-proxy":{"route":{"group":"domain-list0","interface":"Wireguard0","comment":""}}},
+  {"system":{"configuration":{"save":{}}}}
+]
+```
+
+**Request Fields**:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `group` | string | FQDN group name to route |
+| `interface` | string | Target interface name |
+| `comment` | string | Optional description (can be empty string) |
+
+#### Delete DNS-Based Route
+
+**Request Body**:
+
+```json
+[
+  {"webhelp":{"event":{"push":{"data":"{\"type\":\"configuration_change\",\"value\":{\"url\":\"/staticRoutes/dns\"}}}"}}}},
+  {"dns-proxy":{"route":{"no":true,"index":"c52bba355a2830fdf55ccb3748a879df"}}},
+  {"system":{"configuration":{"save":{}}}}
+]
+```
+
+**Notes**:
+- The `index` value comes from the read response and is an MD5 hash string
+- Deleting a DNS-based route does not automatically delete the associated FQDN group
+- Auto-resolved IP routes (with `"auto": true` in `show sc ip route`) are removed when the DNS route is deleted
 
 ---
 

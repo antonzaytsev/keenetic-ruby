@@ -29,6 +29,7 @@ require_relative 'keenetic/resources/users'
 require_relative 'keenetic/resources/components'
 require_relative 'keenetic/resources/qos'
 require_relative 'keenetic/resources/ipv6'
+require_relative 'keenetic/resources/dns_routes'
 
 # Keenetic Router API Client
 #

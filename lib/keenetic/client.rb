@@ -182,6 +182,11 @@ module Keenetic
       @ipv6 ||= Resources::Ipv6.new(self)
     end
 
+    # @return [Resources::DnsRoutes] DNS-based routes and FQDN domain groups resource
+    def dns_routes
+      @dns_routes ||= Resources::DnsRoutes.new(self)
+    end
+
     # Execute arbitrary RCI command(s).
     #
     # Provides raw access to the Keenetic RCI (Remote Command Interface).

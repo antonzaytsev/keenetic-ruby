@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-03-27
+
+### Added
+
+#### DNS-Based Routes
+- `client.dns_routes.domain_groups` - List all FQDN domain groups
+- `client.dns_routes.find_domain_group(name:)` - Find a domain group by name
+- `client.dns_routes.create_domain_group(name:, description:, domains:)` - Create a named list of domains
+- `client.dns_routes.delete_domain_group(name:)` - Delete a domain group
+- `client.dns_routes.routes` - List all DNS-based routes (group → interface mappings)
+- `client.dns_routes.find_route(group:)` - Find a DNS-based route by group name
+- `client.dns_routes.add_route(group:, interface:, comment: '')` - Route a domain group through an interface
+- `client.dns_routes.delete_route(index:)` - Delete a DNS-based route by its index
+
+DNS-based routing automatically resolves domain names and installs floating IP routes
+to the target interface, matching what the Keenetic web UI does under *Static Routes → DNS*.
+
+---
+
 ## [1.0.0] - 2026-02-01
 
 ### Added
