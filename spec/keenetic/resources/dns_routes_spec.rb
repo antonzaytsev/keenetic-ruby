@@ -273,12 +273,12 @@ RSpec.describe Keenetic::Resources::DnsRoutes do
     let(:expected_body) do
       [
         { 'webhelp' => { 'event' => { 'push' => { 'data' => '{"type":"configuration_change","value":{"url":"/staticRoutes/dns"}}' } } } },
-        { 'dns-proxy' => { 'route' => { 'group' => 'domain-list0', 'interface' => 'Wireguard0', 'comment' => '' } } },
+        { 'dns-proxy' => { 'route' => { 'group' => 'domain-list0', 'interface' => 'Wireguard0', 'auto' => true, 'comment' => '' } } },
         { 'system' => { 'configuration' => { 'save' => {} } } }
       ]
     end
 
-    it 'sends the correct create command' do
+    it 'sends the correct create command with auto:true' do
       stub = stub_request(:post, 'http://192.168.1.1/rci/')
         .with(body: expected_body.to_json)
         .to_return(status: 200, body: [{}].to_json)
@@ -291,7 +291,7 @@ RSpec.describe Keenetic::Resources::DnsRoutes do
     it 'includes comment when provided' do
       expected_with_comment = [
         { 'webhelp' => { 'event' => { 'push' => { 'data' => '{"type":"configuration_change","value":{"url":"/staticRoutes/dns"}}' } } } },
-        { 'dns-proxy' => { 'route' => { 'group' => 'domain-list0', 'interface' => 'Wireguard0', 'comment' => 'my comment' } } },
+        { 'dns-proxy' => { 'route' => { 'group' => 'domain-list0', 'interface' => 'Wireguard0', 'auto' => true, 'comment' => 'my comment' } } },
         { 'system' => { 'configuration' => { 'save' => {} } } }
       ]
 

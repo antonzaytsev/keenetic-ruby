@@ -195,7 +195,7 @@ module Keenetic
       #
       # == Keenetic API Request
       #   POST /rci/ (batch)
-      #   Body: [webhelp_event, {"dns-proxy":{"route":{"group":"...","interface":"...","comment":"..."}}}, save]
+      #   Body: [webhelp_event, {"dns-proxy":{"route":{"group":"...","interface":"...","auto":true,"comment":"..."}}}, save]
       #
       # @param group [String] FQDN group name (e.g., "domain-list0")
       # @param interface [String] Target interface (e.g., "Wireguard0")
@@ -211,7 +211,7 @@ module Keenetic
 
         commands = [
           webhelp_event,
-          { 'dns-proxy' => { 'route' => { 'group' => group.to_s, 'interface' => interface.to_s, 'comment' => comment.to_s } } },
+          { 'dns-proxy' => { 'route' => { 'group' => group.to_s, 'interface' => interface.to_s, 'auto' => true, 'comment' => comment.to_s } } },
           save_config_command
         ]
 

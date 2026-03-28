@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-03-29
+
+### Fixed
+
+- `dns_routes.add_route` now sends `auto: true` to the router, which is required for
+  DNS resolution to actually trigger and install floating IP routes. Routes created
+  with 1.1.0 were silently stored without auto-resolution.
+
+---
+
 ## [1.1.0] - 2026-03-27
 
 ### Added
